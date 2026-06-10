@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "564842000826",
+    "project_id": "proyectofasetecmov",
+    "storage_bucket": "proyectofasetecmov.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564842000826:android:e4136fa9b33cae74c12d83",
+        "android_client_info": {
+          "package_name": "com.mchi.proyecto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX41lY1AKLydVQW8Qaa1nxUN_uhL_sueE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

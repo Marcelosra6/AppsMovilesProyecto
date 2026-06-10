@@ -1,0 +1,12 @@
+<resources>
+    <string-array name="tipos_documento">
+        <item>DNI</item>
+        <item>Carné de extranjería</item>
+        <item>Pasaporte</item>
+    </string-array>
+
+    <string-array name="generos">
+        <item>Femenino</item>
+        <item>Masculino</item>
+    </string-array>
+</resources>

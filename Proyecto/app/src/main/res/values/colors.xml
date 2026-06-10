@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="blue_translucent">#CC2773BA</color>
+    <color name="blue_transparent">#C2C1D5FB</color>
+    <color name="gray_transparent">#C2E4E4E4</color>
+
+    <color name="colorPrimary">#1976D2</color> <!-- Azul -->
+    <color name="colorPrimaryDark">#004BA0</color>
+    <color name="colorAccent">#03A9F4</color>
+    <color name="backgroundLight">#FFFFFF</color>
+    <color name="textPrimary">#000000</color>
+    <color name="textSecondary">#444444</color>
+
+</resources>
