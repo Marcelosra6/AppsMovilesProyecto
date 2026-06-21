@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- Botón Plan Estándar -->
+    <Button
+        android:id="@+id/btnEstandar"
+        android:text="Plan Estándar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Información del Plan Estándar -->
+    <TextView
+        android:id="@+id/planEstandarInfo"
+        android:text="Chat especializado con un especialista sobre problemas musculoesqueléticos de rodilla. Accede a consultas personalizadas con expertos que te ayudarán con tu rehabilitación y manejo del dolor."
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="visible" />
+
+    <!-- Estado del pago -->
+    <TextView
+        android:id="@+id/paymentStatus"
+        android:text=""
+        android:textSize="14sp"
+        android:textColor="#4CAF50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

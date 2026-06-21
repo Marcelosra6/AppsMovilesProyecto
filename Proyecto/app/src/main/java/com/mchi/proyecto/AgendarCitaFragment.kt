@@ -1,5 +1,6 @@
 package com.mchi.proyecto
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.mchi.proyecto.databinding.FragmentAgendarCitaBinding
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -22,6 +24,7 @@ class AgendarCitaFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var nombreCompletoUsuario = ""
+    private var fechaSeleccionada = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +35,6 @@ class AgendarCitaFragment : Fragment() {
 
         val user = FirebaseAuth.getInstance().currentUser
 
-        // Cargar nombre desde Firebase
         if (user != null) {
             FirebaseDatabase.getInstance().getReference("usuarios").child(user.uid)
                 .get()
@@ -53,7 +55,6 @@ class AgendarCitaFragment : Fragment() {
             binding.tvNombreUsuario.text = "No hay usuario activo"
         }
 
-        // Spinner de especialistas
         val especialistas = arrayOf("ROBERT VERGARA", "LESLI ARIAS", "MARÍA SALAZAR")
         binding.spinnerEspecialistas.adapter = ArrayAdapter(
             requireContext(),
@@ -61,7 +62,6 @@ class AgendarCitaFragment : Fragment() {
             especialistas
         )
 
-        // Contador de palabras (máx. 50)
         binding.etDescripcion.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -73,7 +73,11 @@ class AgendarCitaFragment : Fragment() {
             }
         })
 
-        // Botón Reservar Cita
+        binding.etFechaCita.setOnClickListener { showDatePicker() }
+        binding.etFechaCita.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) showDatePicker()
+        }
+
         binding.btnReservarCita.setOnClickListener {
             if (user == null) {
                 Toast.makeText(requireContext(), "Debes iniciar sesión.", Toast.LENGTH_SHORT).show()
@@ -88,17 +92,21 @@ class AgendarCitaFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            if (fechaSeleccionada.isEmpty()) {
+                Toast.makeText(requireContext(), "Selecciona una fecha", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val fechaReserva = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
             val citaRef = FirebaseDatabase.getInstance()
-                .getReference("citas")
-                .child(user.uid)
-                .push()
+                .getReference("citas").child(user.uid).push()
 
             val citaData = mapOf(
                 "nombreUsuario" to nombreCompletoUsuario,
                 "especialista" to especialista,
                 "descripcion" to descripcion,
                 "fechaReserva" to fechaReserva,
+                "fecha" to fechaSeleccionada,
                 "estado" to "Pendiente"
             )
 
@@ -117,6 +125,14 @@ class AgendarCitaFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun showDatePicker() {
+        val c = Calendar.getInstance()
+        DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+            fechaSeleccionada = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
+            binding.etFechaCita.setText(fechaSeleccionada)
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     override fun onDestroyView() {

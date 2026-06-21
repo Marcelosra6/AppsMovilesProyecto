@@ -5,5 +5,6 @@ data class Cita(
     var especialista: String = "",
     var descripcion: String = "",
     var fechaReserva: String = "",
+    var fecha: String = "",
     var estado: String = ""
 )

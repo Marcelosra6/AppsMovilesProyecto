@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:gravity="center"
+    android:fitsSystemWindows="true">
+
+    <!-- Campo para ingresar el número de tarjeta -->
+    <EditText
+        android:id="@+id/edtCardNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Número de tarjeta"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:padding="10dp"
+        android:textSize="16sp" />
+
+    <!-- Campo para ingresar la fecha de vencimiento -->
+    <EditText
+        android:id="@+id/edtExpirationDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Fecha de vencimiento (MM/AA)"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:padding="10dp"
+        android:textSize="16sp" />
+
+    <!-- Campo para ingresar el CVV -->
+    <EditText
+        android:id="@+id/edtCVV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="CVV"
+        android:inputType="numberPassword"
+        android:minHeight="48dp"
+        android:padding="10dp"
+        android:textSize="16sp" />
+
+    <!-- Botón para procesar el pago -->
+    <Button
+        android:id="@+id/btnProcessPayment"
+        android:text="Pagar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#4CAF50"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
+    <!-- Mensaje de resultado del pago -->
+    <TextView
+        android:id="@+id/txtPaymentResult"
+        android:text=""
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textColor="#FF0000" />
+
+</LinearLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">recupera_plus</string>
+    <string name="app_name">Seguimiento de Pacientes</string>
     <string name="default_web_client_id">TU_CLIENT_ID_DE_FIREBASE</string>
     <string name="iniciar_sesion_con_google">Iniciar Sesion con Google</string>
 

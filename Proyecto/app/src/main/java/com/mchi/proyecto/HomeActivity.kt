@@ -1,5 +1,6 @@
 package com.mchi.proyecto
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -17,18 +18,41 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.navigationBar) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(0, 0, 0, systemBars.bottom)
+            binding.topBar.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            binding.navigationBar.setPadding(0, 0, 0, systemBars.bottom)
             insets
         }
 
-        binding.navCitas.setOnClickListener { openFragment(MisCitasFragment()) }
+        if (savedInstanceState == null) {
+            val tipo = getSharedPreferences("rol", Context.MODE_PRIVATE).getString("tipo", "paciente")
+            if (tipo == "especialista") {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, EspecialistaFragment())
+                    .commit()
+            } else {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, InicioFragment())
+                    .commit()
+            }
+        }
 
         binding.imgLogout.setOnClickListener { cerrarSesion() }
+        binding.navInicio.setOnClickListener {
+            val tipo = getSharedPreferences("rol", Context.MODE_PRIVATE).getString("tipo", "paciente")
+            if (tipo == "especialista") {
+                openFragment(EspecialistaFragment())
+            } else {
+                openFragment(InicioFragment())
+            }
+        }
+        binding.navCitas.setOnClickListener { openFragment(MisCitasFragment()) }
+        binding.navAsistencia.setOnClickListener { openFragment(AsistenciaFragment()) }
     }
 
     private fun cerrarSesion() {
+        getSharedPreferences("rol", Context.MODE_PRIVATE).edit().clear().apply()
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)

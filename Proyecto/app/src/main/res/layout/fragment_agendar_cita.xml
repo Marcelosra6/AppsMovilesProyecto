@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!-- Título principal -->
         <TextView
             android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
@@ -23,7 +22,6 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="8dp" />
 
-        <!-- Nombre del usuario (Firebase) -->
         <TextView
             android:id="@+id/tvNombreUsuario"
             android:layout_width="wrap_content"
@@ -33,7 +31,6 @@
             android:textColor="@android:color/darker_gray"
             android:layout_marginBottom="24dp" />
 
-        <!-- Subtítulo -->
         <TextView
             android:id="@+id/tvDatosCita"
             android:layout_width="wrap_content"
@@ -44,14 +41,12 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="4dp" />
 
-        <!-- Línea decorativa -->
         <View
             android:layout_width="80dp"
             android:layout_height="2dp"
             android:background="@android:color/darker_gray"
             android:layout_marginBottom="16dp" />
 
-        <!-- Selección de especialista -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,7 +55,6 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="8dp" />
 
-        <!-- Spinner fondo blanco -->
         <Spinner
             android:id="@+id/spinnerEspecialistas"
             android:layout_width="match_parent"
@@ -71,7 +65,6 @@
             android:padding="8dp"
             android:popupBackground="@android:color/white" />
 
-        <!-- Descripción de la situación -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,7 +73,6 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="8dp" />
 
-        <!-- Cuadro de texto fondo blanco -->
         <EditText
             android:id="@+id/etDescripcion"
             android:layout_width="match_parent"
@@ -94,7 +86,6 @@
             android:inputType="textMultiLine"
             android:layout_marginBottom="4dp" />
 
-        <!-- Contador de palabras -->
         <TextView
             android:id="@+id/tvContadorPalabras"
             android:layout_width="wrap_content"
@@ -104,7 +95,27 @@
             android:textSize="12sp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Botón reservar -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha de la cita:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etFechaCita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Selecciona una fecha"
+            android:focusable="false"
+            android:clickable="true"
+            android:background="@android:color/white"
+            android:padding="12dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="24dp"
+            android:layout_marginHorizontal="32dp"/>
+
         <Button
             android:id="@+id/btnReservarCita"
             android:layout_width="match_parent"

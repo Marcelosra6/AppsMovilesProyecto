@@ -76,27 +76,28 @@ class MisCitasFragment : Fragment() {
                 }
 
                 var hayCitas = false
-                val ahora = System.currentTimeMillis()
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val ahora = sdf.parse(sdf.format(Date())) ?: Date()
 
-                for (citaSnapshot in snapshot.children) {
-                    val especialista = citaSnapshot.child("especialista").getValue(String::class.java) ?: continue
-                    val descripcion = citaSnapshot.child("descripcion").getValue(String::class.java)
-                    val estado = citaSnapshot.child("estado").getValue(String::class.java)
-                    val fechaReserva = citaSnapshot.child("fechaReserva").getValue(String::class.java) ?: continue
+                    for (citaSnapshot in snapshot.children) {
+                        val especialista = citaSnapshot.child("especialista").getValue(String::class.java) ?: continue
+                        val descripcion = citaSnapshot.child("descripcion").getValue(String::class.java)
+                        val estado = citaSnapshot.child("estado").getValue(String::class.java)
+                        val fecha = citaSnapshot.child("fecha").getValue(String::class.java) ?: ""
+                        val fechaReserva = citaSnapshot.child("fechaReserva").getValue(String::class.java) ?: continue
 
-                    try {
-                        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                        val fechaCita: Date = sdf.parse(fechaReserva) ?: continue
-                        val esFutura = fechaCita.time >= ahora
+                        try {
+                            val fechaCita: Date = sdf.parse(fecha) ?: continue
+                            val esFutura = fechaCita.time >= ahora.time
 
-                        if ((mostrarProximas && esFutura) || (!mostrarProximas && !esFutura)) {
-                            hayCitas = true
-                            agregarCitaVista(especialista, fechaReserva, descripcion, estado)
+                            if ((mostrarProximas && esFutura) || (!mostrarProximas && !esFutura)) {
+                                hayCitas = true
+                                agregarCitaVista(especialista, fecha, descripcion, estado)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
-                }
 
                 if (!hayCitas) {
                     mostrarMensaje(
