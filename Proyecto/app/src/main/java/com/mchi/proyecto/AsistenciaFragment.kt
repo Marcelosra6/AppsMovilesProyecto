@@ -15,6 +15,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mchi.proyecto.databinding.FragmentAsistenciaBinding
 
 class AsistenciaFragment : Fragment() {
@@ -24,6 +25,7 @@ class AsistenciaFragment : Fragment() {
 
     private lateinit var adapter: ChatAdapter
     private var especialistaSeleccionado = ""
+    private val especialistasList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,21 +34,16 @@ class AsistenciaFragment : Fragment() {
     ): View {
         _binding = FragmentAsistenciaBinding.inflate(inflater, container, false)
 
-        val especialistas = arrayOf("Selecciona un especialista", "ROBERT VERGARA", "LESLI ARIAS", "MARÍA SALAZAR")
-        binding.spinnerEspecialistaChat.adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            especialistas
-        )
-
         adapter = ChatAdapter()
         binding.recyclerMessages.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerMessages.adapter = adapter
 
+        cargarEspecialistas()
+
         binding.spinnerEspecialistaChat.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position > 0) {
-                    especialistaSeleccionado = especialistas[position]
+                    especialistaSeleccionado = especialistasList[position - 1]
                     cargarMensajes()
                 }
             }
@@ -61,6 +58,30 @@ class AsistenciaFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun cargarEspecialistas() {
+        FirebaseDatabase.getInstance().getReference("especialistas")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    especialistasList.clear()
+                    for (child in snapshot.children) {
+                        val especialista = child.getValue(Especialista::class.java)
+                        if (especialista != null) {
+                            val nombre = "${especialista.nombres} ${especialista.apellidos}".trim()
+                            if (nombre.isNotEmpty()) especialistasList.add(nombre)
+                        }
+                    }
+                    val items = mutableListOf("Selecciona un especialista")
+                    items.addAll(especialistasList)
+                    binding.spinnerEspecialistaChat.adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        items
+                    )
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     private fun getChatRef() = FirebaseDatabase.getInstance()

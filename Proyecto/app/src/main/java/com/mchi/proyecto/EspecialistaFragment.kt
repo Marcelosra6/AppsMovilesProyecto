@@ -18,6 +18,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mchi.proyecto.databinding.FragmentEspecialistaBinding
 
 class EspecialistaFragment : Fragment() {
@@ -28,6 +29,7 @@ class EspecialistaFragment : Fragment() {
     private var pacienteSeleccionado = ""
     private lateinit var adapter: ChatAdapter
     private val pacientes = mutableListOf<String>()
+    private val nombresPacientes = mutableMapOf<String, String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,7 +78,7 @@ class EspecialistaFragment : Fragment() {
 
     private fun agregarPacienteVista(pacienteId: String) {
         val tv = TextView(requireContext()).apply {
-            text = "Paciente: $pacienteId"
+            text = "Paciente: $pacienteId (cargando...)"
             textSize = 16f
             setPadding(16, 16, 16, 16)
             setBackgroundResource(android.R.drawable.dialog_holo_light_frame)
@@ -88,11 +90,24 @@ class EspecialistaFragment : Fragment() {
                 pacienteSeleccionado = pacienteId
                 binding.chatLayout.visibility = View.VISIBLE
                 binding.recyclerPacientes.visibility = View.GONE
-                binding.tvChatCon.text = "Chat con paciente: $pacienteId"
+                binding.tvChatCon.text = "Chat con: ${nombresPacientes[pacienteId] ?: pacienteId}"
                 cargarMensajesPaciente()
             }
         }
         binding.recyclerPacientes.addView(tv)
+        FirebaseDatabase.getInstance().getReference("usuarios").child(pacienteId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val nombres = snapshot.child("nombres").getValue(String::class.java) ?: ""
+                    val apellidos = snapshot.child("apellidos").getValue(String::class.java) ?: ""
+                    val nombreCompleto = "$nombres $apellidos".trim()
+                    if (nombreCompleto.isNotEmpty()) {
+                        nombresPacientes[pacienteId] = nombreCompleto
+                        tv.text = "Paciente: $nombreCompleto"
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     private fun cargarMensajesPaciente() {

@@ -6,5 +6,7 @@ data class Cita(
     var descripcion: String = "",
     var fechaReserva: String = "",
     var fecha: String = "",
-    var estado: String = ""
+    var estado: String = "",
+    var paciente: String = "",
+    var refPath: String = ""
 )

@@ -317,6 +317,28 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <CheckBox
+                android:id="@+id/cbEspecialista"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Registrarse como Especialista"
+                android:layout_marginTop="12dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutCodigoMedico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Código Médico (ej. CMP 04512)"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCodigoMedico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Botón finalizar -->
             <Button
                 android:id="@+id/btnFinalizar"

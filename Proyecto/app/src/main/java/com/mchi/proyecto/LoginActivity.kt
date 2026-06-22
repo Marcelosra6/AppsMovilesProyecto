@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.WindowManager
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,8 +18,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mchi.proyecto.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -61,12 +63,6 @@ class LoginActivity : AppCompatActivity() {
             finish()
             return
         }
-        
-        binding.btnLogin.setOnClickListener { loginNormal() }
-        binding.tvRegister.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-        }
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -74,28 +70,17 @@ class LoginActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        (binding.btnGoogleSignIn.getChildAt(0) as TextView).text = "Iniciar sesión con Google"
 
-
-        val especialistas = arrayOf("Selecciona tu nombre", "ROBERT VERGARA", "LESLI ARIAS", "MARÍA SALAZAR")
-        binding.spEspecialistaLogin.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            especialistas
-        )
-
-        binding.btnIngresarEspecialista.setOnClickListener {
-            val seleccion = binding.spEspecialistaLogin.selectedItem?.toString() ?: ""
-            if (seleccion.isEmpty() || seleccion == "Selecciona tu nombre") {
-                Toast.makeText(this, "Selecciona tu nombre de especialista", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            getSharedPreferences("rol", Context.MODE_PRIVATE).edit()
-                .putString("tipo", "especialista")
-                .putString("nombre", seleccion)
-                .apply()
-            startActivity(Intent(this, HomeActivity::class.java))
-            finish()
+        binding.btnLogin.setOnClickListener { loginNormal() }
+        binding.btnGoogleSignIn.setOnClickListener {
+            googleSignInLauncher.launch(googleSignInClient.signInIntent)
         }
+        binding.tvRegister.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
+
     }
 
     private fun loginNormal() {
@@ -110,12 +95,8 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    getSharedPreferences("rol", Context.MODE_PRIVATE).edit()
-                        .putString("tipo", "paciente")
-                        .apply()
-                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
+                    val userId = auth.currentUser!!.uid
+                    verificarRol(userId)
                 } else {
                     Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
@@ -132,15 +113,40 @@ class LoginActivity : AppCompatActivity() {
                         child("email").setValue(acct.email)
                         child("nombre").setValue(acct.displayName)
                     }
-                    getSharedPreferences("rol", Context.MODE_PRIVATE).edit()
-                        .putString("tipo", "paciente")
-                        .apply()
-                    Toast.makeText(this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
+                    verificarRol(userId)
                 } else {
                     Toast.makeText(this, "Error en autenticación con Google", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun verificarRol(userId: String) {
+        FirebaseDatabase.getInstance().getReference("especialistas").child(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val prefs = getSharedPreferences("rol", Context.MODE_PRIVATE).edit()
+                    if (snapshot.exists()) {
+                        val especialista = snapshot.getValue(Especialista::class.java)
+                        val nombre = especialista?.let { "${it.nombres} ${it.apellidos}" } ?: "Especialista"
+                        prefs.putString("tipo", "especialista")
+                        prefs.putString("nombre", nombre)
+                    } else {
+                        prefs.putString("tipo", "paciente")
+                    }
+                    prefs.apply()
+                    Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
+                    finish()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    getSharedPreferences("rol", Context.MODE_PRIVATE).edit()
+                        .putString("tipo", "paciente")
+                        .apply()
+                    Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
+                    finish()
+                }
+            })
     }
 }

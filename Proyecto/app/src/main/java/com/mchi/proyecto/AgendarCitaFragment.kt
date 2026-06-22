@@ -11,7 +11,10 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mchi.proyecto.databinding.FragmentAgendarCitaBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -25,6 +28,7 @@ class AgendarCitaFragment : Fragment() {
 
     private var nombreCompletoUsuario = ""
     private var fechaSeleccionada = ""
+    private val especialistasList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,12 +59,7 @@ class AgendarCitaFragment : Fragment() {
             binding.tvNombreUsuario.text = "No hay usuario activo"
         }
 
-        val especialistas = arrayOf("ROBERT VERGARA", "LESLI ARIAS", "MARÍA SALAZAR")
-        binding.spinnerEspecialistas.adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            especialistas
-        )
+        cargarEspecialistas()
 
         binding.etDescripcion.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -84,7 +83,7 @@ class AgendarCitaFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val especialista = binding.spinnerEspecialistas.selectedItem.toString()
+            val especialista = especialistasList.getOrNull(binding.spinnerEspecialistas.selectedItemPosition) ?: ""
             val descripcion = binding.etDescripcion.text.toString().trim()
 
             if (descripcion.isEmpty()) {
@@ -125,6 +124,28 @@ class AgendarCitaFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun cargarEspecialistas() {
+        FirebaseDatabase.getInstance().getReference("especialistas")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    especialistasList.clear()
+                    for (child in snapshot.children) {
+                        val esp = child.getValue(Especialista::class.java)
+                        if (esp != null) {
+                            val nombre = "${esp.nombres} ${esp.apellidos}".trim()
+                            if (nombre.isNotEmpty()) especialistasList.add(nombre)
+                        }
+                    }
+                    binding.spinnerEspecialistas.adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        especialistasList
+                    )
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     private fun showDatePicker() {

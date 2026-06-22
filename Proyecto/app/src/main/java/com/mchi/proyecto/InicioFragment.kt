@@ -98,15 +98,15 @@ class InicioFragment : Fragment() {
     }
 
     private fun cargarConsejoDelDia() {
-        binding.txtConsejo.text = "Cargando consejo..."
+        if (_binding != null) binding.txtConsejo.text = "Cargando consejo..."
         lifecycleScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
                     RetrofitClient.apiService.getHealthTip()
                 }
-                binding.txtConsejo.text = "\"${response.slip.advice}\""
+                if (_binding != null) binding.txtConsejo.text = "\"${response.slip.advice}\""
             } catch (e: Exception) {
-                binding.txtConsejo.text = "Consejo no disponible: ${e.localizedMessage}"
+                if (_binding != null) binding.txtConsejo.text = "Consejo no disponible: ${e.localizedMessage}"
             }
         }
     }

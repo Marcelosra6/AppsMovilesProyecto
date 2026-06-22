@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "564842000826",
+    "firebase_url": "https://proyectofasetecmov-default-rtdb.firebaseio.com",
     "project_id": "proyectofasetecmov",
     "storage_bucket": "proyectofasetecmov.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.mchi.proyecto"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "564842000826-42su0jupoos17mv94q44tnkkvrnnb6pc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mchi.proyecto",
+            "certificate_hash": "6f25595911a37ed1bbc76b8de9986a1532da11f3"
+          }
+        },
+        {
+          "client_id": "564842000826-gob88ld38lku6qmeem9m3dvr0kdg9im3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDX41lY1AKLydVQW8Qaa1nxUN_uhL_sueE"
@@ -20,7 +34,41 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564842000826-gob88ld38lku6qmeem9m3dvr0kdg9im3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564842000826:android:59d29f7e6aa26085c12d83",
+        "android_client_info": {
+          "package_name": "com.ucsm.proyectojava"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564842000826-gob88ld38lku6qmeem9m3dvr0kdg9im3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX41lY1AKLydVQW8Qaa1nxUN_uhL_sueE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564842000826-gob88ld38lku6qmeem9m3dvr0kdg9im3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

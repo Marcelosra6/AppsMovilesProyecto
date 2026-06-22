@@ -26,29 +26,22 @@ class HomeActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState == null) {
-            val tipo = getSharedPreferences("rol", Context.MODE_PRIVATE).getString("tipo", "paciente")
-            if (tipo == "especialista") {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, EspecialistaFragment())
-                    .commit()
-            } else {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, InicioFragment())
-                    .commit()
-            }
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, InicioFragment())
+                .commit()
         }
 
         binding.imgLogout.setOnClickListener { cerrarSesion() }
-        binding.navInicio.setOnClickListener {
+        binding.navInicio.setOnClickListener { openFragment(InicioFragment()) }
+        binding.navCitas.setOnClickListener { openFragment(MisCitasFragment()) }
+        binding.navAsistencia.setOnClickListener {
             val tipo = getSharedPreferences("rol", Context.MODE_PRIVATE).getString("tipo", "paciente")
             if (tipo == "especialista") {
                 openFragment(EspecialistaFragment())
             } else {
-                openFragment(InicioFragment())
+                openFragment(AsistenciaFragment())
             }
         }
-        binding.navCitas.setOnClickListener { openFragment(MisCitasFragment()) }
-        binding.navAsistencia.setOnClickListener { openFragment(AsistenciaFragment()) }
     }
 
     private fun cerrarSesion() {

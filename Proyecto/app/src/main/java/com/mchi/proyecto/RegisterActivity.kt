@@ -1,6 +1,7 @@
 package com.mchi.proyecto
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
@@ -46,6 +47,11 @@ class RegisterActivity : AppCompatActivity() {
         binding.etFechaNac.setOnClickListener { showDatePicker() }
         binding.btnContinuar.setOnClickListener { validarPaso1() }
         binding.btnContinuar2.setOnClickListener { validarPaso2() }
+
+        binding.cbEspecialista.setOnCheckedChangeListener { _, isChecked ->
+            binding.layoutCodigoMedico.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+
         binding.btnFinalizar.setOnClickListener { guardarEnFirebase() }
     }
 
@@ -117,15 +123,50 @@ class RegisterActivity : AppCompatActivity() {
         }
         if (password != confirmPassword) { mostrar("Las contraseñas no coinciden"); return }
 
+        val esEspecialista = binding.cbEspecialista.isChecked
+        val codigoMedico = binding.etCodigoMedico.text?.toString()?.trim() ?: ""
+
+        if (esEspecialista) {
+            if (!codigoMedico.matches("^CMP \\d{5}$".toRegex())) {
+                mostrar("Código médico debe ser CMP seguido de espacio y 5 dígitos (ej. CMP 04512)")
+                return
+            }
+        }
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser!!.uid
                     usuariosRef.child(userId).setValue(usuario)
                         .addOnSuccessListener {
-                            mostrar("Usuario registrado exitosamente")
-                            startActivity(Intent(this, LoginActivity::class.java))
-                            finish()
+                            if (esEspecialista) {
+                                val especialista = Especialista(
+                                    nombres = usuario.nombres,
+                                    apellidos = usuario.apellidos,
+                                    email = email,
+                                    codigoMedico = codigoMedico
+                                )
+                                FirebaseDatabase.getInstance()
+                                    .getReference("especialistas").child(userId)
+                                    .setValue(especialista)
+                                    .addOnSuccessListener {
+                                        getSharedPreferences("rol", Context.MODE_PRIVATE).edit()
+                                            .putString("tipo", "especialista")
+                                            .putString("nombre", "${usuario.nombres} ${usuario.apellidos}")
+                                            .apply()
+                                        mostrar("Especialista registrado exitosamente")
+                                        startActivity(Intent(this, HomeActivity::class.java))
+                                        finish()
+                                    }
+                                    .addOnFailureListener { e -> mostrar("Error: ${e.message}") }
+                            } else {
+                                getSharedPreferences("rol", Context.MODE_PRIVATE).edit()
+                                    .putString("tipo", "paciente")
+                                    .apply()
+                                mostrar("Usuario registrado exitosamente")
+                                startActivity(Intent(this, LoginActivity::class.java))
+                                finish()
+                            }
                         }
                         .addOnFailureListener { e -> mostrar("Error: ${e.message}") }
                 } else {
