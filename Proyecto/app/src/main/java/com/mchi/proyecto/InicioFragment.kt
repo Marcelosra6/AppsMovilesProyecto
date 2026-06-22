@@ -6,12 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.mchi.proyecto.api.RetrofitClient
 import com.mchi.proyecto.databinding.FragmentInicioBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -32,6 +37,7 @@ class InicioFragment : Fragment() {
 
         cargarNombreUsuario()
         actualizarTotales()
+        cargarConsejoDelDia()
         return binding.root
     }
 
@@ -89,6 +95,20 @@ class InicioFragment : Fragment() {
             }
             override fun onCancelled(error: DatabaseError) {}
         })
+    }
+
+    private fun cargarConsejoDelDia() {
+        binding.txtConsejo.text = "Cargando consejo..."
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.getHealthTip()
+                }
+                binding.txtConsejo.text = "\"${response.slip.advice}\""
+            } catch (e: Exception) {
+                binding.txtConsejo.text = "Consejo no disponible: ${e.localizedMessage}"
+            }
+        }
     }
 
     private fun actualizarTotales() {

@@ -61,6 +61,34 @@
         </LinearLayout>
 
 
+        <!-- Consejo del día vía WebService -->
+        <TextView
+            android:text="CONSEJO DEL DÍA"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/border_box"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txtConsejo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Cargando consejo..."
+                android:textSize="16sp"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+
         <!-- Rutinas -->
 
         <!-- Registrar flexiones -->
